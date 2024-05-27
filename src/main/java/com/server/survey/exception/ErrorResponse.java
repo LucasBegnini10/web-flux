@@ -26,10 +26,18 @@ public class ErrorResponse {
 
 
     public static ErrorResponse badRequest(BadRequestException ex) {
+        return buildError(ex.getMessage(), HttpStatus.BAD_REQUEST.value());
+    }
+
+    public static ErrorResponse notFound(NotFoundException ex) {
+        return buildError(ex.getMessage(), HttpStatus.NOT_FOUND.value());
+    }
+
+    public static ErrorResponse buildError(String message, int status) {
         return builder()
                 .withId(UUID.randomUUID().toString())
-                .withMessage(ex.getMessage())
-                .withStatus(HttpStatus.BAD_REQUEST.value())
+                .withMessage(message)
+                .withStatus(status)
                 .withDateTime(LocalDateTime.now())
                 .build();
     }

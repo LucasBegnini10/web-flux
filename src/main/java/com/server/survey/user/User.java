@@ -31,6 +31,8 @@ public class User {
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
+
+    private RoleType role = RoleType.USER;
     private LocalDateTime createdAt;
 
     public static Builder builder(){
@@ -41,14 +43,9 @@ public class User {
         private String id;
         private String name;
         private String email;
+        private RoleType role = RoleType.USER;
         private String password;
         private LocalDateTime createdAt;
-
-
-        public Builder withId(String id){
-            this.id = id;
-            return this;
-        }
 
         public Builder withName(String name){
             this.name = name;
@@ -62,6 +59,11 @@ public class User {
 
         public Builder withPassword(String password){
             this.password = password;
+            return this;
+        }
+
+        public Builder withRole(RoleType role){
+            this.role = role;
             return this;
         }
 

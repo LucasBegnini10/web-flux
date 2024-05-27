@@ -6,9 +6,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import reactor.core.publisher.Mono;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 @ControllerAdvice
 public class ErrorHandler {
 
@@ -16,6 +13,15 @@ public class ErrorHandler {
     public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex){
         return Mono.just(ex)
                 .map(ErrorResponse::badRequest)
+                .map(error -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error))
+                .block();
+
+    }
+
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex){
+        return Mono.just(ex)
+                .map(ErrorResponse::notFound)
                 .map(error -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error))
                 .block();
 

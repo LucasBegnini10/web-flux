@@ -1,5 +1,7 @@
 package com.server.survey.auth;
 
+import com.server.survey.auth.dto.AuthDTO;
+import com.server.survey.auth.dto.AuthResponseDTO;
 import com.server.survey.user.User;
 import com.server.survey.user.dto.CreateUserDTO;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,8 +21,8 @@ public class AuthController {
     }
 
     @PostMapping()
-    public String auth(){
-        return "Auth";
+    public Mono<AuthResponseDTO> auth(@RequestBody AuthDTO authDTO){
+        return this.authService.auth(authDTO);
     }
 
     @PostMapping("register")
