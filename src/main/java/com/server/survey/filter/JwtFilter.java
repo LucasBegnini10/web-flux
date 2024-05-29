@@ -55,12 +55,12 @@ public class JwtFilter implements WebFilter {
 
     private Authentication buildAuthentication(
             Object principal,
-            RoleType authorities
+            RoleType role
     ) {
         return new UsernamePasswordAuthenticationToken(
                 principal,
                 null,
-                AuthorityUtils.createAuthorityList(authorities.name())
+                AuthorityUtils.createAuthorityList(role.name())
         );
     }
 }

@@ -18,6 +18,7 @@ public class User {
         this.id = builder.id;
         this.name = builder.name;
         this.email = builder.email;
+        this.role = builder.role;
         this.password = builder.password;
         this.createdAt = builder.createdAt;
     }
@@ -31,7 +32,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    private RoleType role = RoleType.ROLE_USER;
+    private RoleType role;
     private LocalDateTime createdAt;
 
     public static Builder builder(){
@@ -41,6 +42,7 @@ public class User {
     public static class Builder {
         private String id;
         private String name;
+        private RoleType role;
         private String email;
         private String password;
         private LocalDateTime createdAt;
@@ -66,6 +68,7 @@ public class User {
         }
 
         public Builder withRole(RoleType role){
+            this.role = role;
             return this;
         }
 

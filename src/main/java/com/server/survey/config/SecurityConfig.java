@@ -32,7 +32,7 @@ class SecurityConfig {
                     exchange
                             .pathMatchers(HttpMethod.POST, "api/v1/auth").permitAll()
                             .pathMatchers(HttpMethod.POST, "api/v1/auth/register").permitAll()
-                            .pathMatchers(HttpMethod.GET, "api/v1/users").hasRole(RoleType.ROLE_USER.getRoleWithoutPrefix())
+                            .pathMatchers(HttpMethod.GET, "api/v1/users").hasRole(RoleType.ROLE_ADMIN.getRoleWithoutPrefix())
                             .anyExchange().permitAll();
                 })
                 .addFilterBefore(jwtFilter, SecurityWebFiltersOrder.FORM_LOGIN)
