@@ -4,13 +4,17 @@ import lombok.Getter;
 
 @Getter
 public enum RoleType {
-    ADMIN("ADMIN"),
-    USER("USER");
+    ROLE_ADMIN("ROLE_ADMIN"),
+    ROLE_USER("ROLE_USER");
 
     private final String role;
 
     RoleType(String role){
         this.role = role;
+    }
+
+    public String getRoleWithoutPrefix(){
+        return role.substring(5);
     }
 
 }

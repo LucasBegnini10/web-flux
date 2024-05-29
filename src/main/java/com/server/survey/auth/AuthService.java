@@ -2,12 +2,12 @@ package com.server.survey.auth;
 
 import com.server.survey.auth.dto.AuthDTO;
 import com.server.survey.auth.dto.AuthResponseDTO;
+import com.server.survey.auth.exception.BadCredentialsException;
 import com.server.survey.auth.exception.UserAlreadyExistsException;
 import com.server.survey.auth.exception.UserNotFoundException;
 import com.server.survey.user.User;
 import com.server.survey.user.UserService;
 import com.server.survey.user.dto.CreateUserDTO;
-import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -16,29 +16,39 @@ import reactor.core.publisher.Mono;
 public class AuthService {
 
     private final UserService userService;
-    private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
+    private final PasswordEncoder passwordEncoder;
+
 
     public AuthService(
             UserService userService,
-            PasswordEncoder passwordEncoder,
-            JwtService jwtService
+            JwtService jwtService,
+            PasswordEncoder passwordEncoder
     ) {
         this.userService = userService;
-        this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public Mono<AuthResponseDTO> auth(AuthDTO authDTO) {
-        return userService.findUserByEmail(authDTO.getEmail())
-                .switchIfEmpty(Mono.error(new UserNotFoundException("User not found")))
+        return Mono.just(authDTO)
+                .flatMap(this::authenticate)
+                .map(jwtService::generateToken)
+                .map(AuthResponseDTO::new);
+    }
+
+    private Mono<User> authenticate(AuthDTO authDTO) {
+        return Mono.just(authDTO)
+                .flatMap(dto -> userService.findUserByEmail(dto.getEmail()))
                 .flatMap(user -> {
                     if (passwordEncoder.matches(authDTO.getPassword(), user.getPassword())) {
-                        return Mono.just(jwtService.createJwt(user)).flatMap(token -> Mono.just(new AuthResponseDTO(token)));
-                    } else {
-                        return Mono.error(new BadCredentialsException("Invalid password"));
+                        return Mono.just(user);
                     }
-                });
+
+                    return Mono.error(new BadCredentialsException("Bad credentials!"));
+
+                })
+                .switchIfEmpty(Mono.error(new UserNotFoundException("User not found!")));
     }
 
     public Mono<User> register(CreateUserDTO createUserDTO) {

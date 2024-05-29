@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.time.LocalDateTime;
 
@@ -32,7 +31,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    private RoleType role = RoleType.USER;
+    private RoleType role = RoleType.ROLE_USER;
     private LocalDateTime createdAt;
 
     public static Builder builder(){
@@ -43,9 +42,13 @@ public class User {
         private String id;
         private String name;
         private String email;
-        private RoleType role = RoleType.USER;
         private String password;
         private LocalDateTime createdAt;
+
+        public Builder withId(String id){
+            this.id = id;
+            return this;
+        }
 
         public Builder withName(String name){
             this.name = name;
@@ -63,7 +66,6 @@ public class User {
         }
 
         public Builder withRole(RoleType role){
-            this.role = role;
             return this;
         }
 

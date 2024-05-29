@@ -33,6 +33,10 @@ public class ErrorResponse {
         return buildError(ex.getMessage(), HttpStatus.NOT_FOUND.value());
     }
 
+    public static ErrorResponse unauthorized(UnauthorizedException ex) {
+        return buildError(ex.getMessage(), HttpStatus.UNAUTHORIZED.value());
+    }
+
     public static ErrorResponse buildError(String message, int status) {
         return builder()
                 .withId(UUID.randomUUID().toString())

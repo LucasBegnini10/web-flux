@@ -1,38 +1,50 @@
 package com.server.survey.config;
 
+import com.server.survey.filter.JwtFilter;
+import com.server.survey.user.RoleType;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
-import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.config.annotation.method.configuration.EnableReactiveMethodSecurity;
+import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
+import org.springframework.security.config.web.server.SecurityWebFiltersOrder;
+import org.springframework.security.config.web.server.ServerHttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.server.SecurityWebFilterChain;
 
 @Configuration
-@EnableWebSecurity
-public class SecurityConfig {
+@EnableWebFluxSecurity
+@EnableReactiveMethodSecurity
+class SecurityConfig {
 
-    @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws  Exception {
-        http.sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .cors(AbstractHttpConfigurer::disable)
-                .csrf(AbstractHttpConfigurer::disable)
-                .authorizeHttpRequests((requests) ->
-                        requests.anyRequest().permitAll()
-                )
-                .formLogin(Customizer.withDefaults())
-                .httpBasic(Customizer.withDefaults());
+    private final JwtFilter jwtFilter;
 
-        return http.build();
+    public SecurityConfig(JwtFilter jwtFilter) {
+        this.jwtFilter = jwtFilter;
     }
 
+    @Bean
+    SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) throws Exception {
+        return http
+                .authorizeExchange(exchange -> {
+                    exchange
+                            .pathMatchers(HttpMethod.POST, "api/v1/auth").permitAll()
+                            .pathMatchers(HttpMethod.POST, "api/v1/auth/register").permitAll()
+                            .pathMatchers(HttpMethod.GET, "api/v1/users").hasRole(RoleType.ROLE_USER.getRoleWithoutPrefix())
+                            .anyExchange().permitAll();
+                })
+                .addFilterBefore(jwtFilter, SecurityWebFiltersOrder.FORM_LOGIN)
+                .cors(ServerHttpSecurity.CorsSpec::disable)
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+                .httpBasic(Customizer.withDefaults())
+                .formLogin(Customizer.withDefaults())
+                .build();
+    }
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
+    public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
-
 }
