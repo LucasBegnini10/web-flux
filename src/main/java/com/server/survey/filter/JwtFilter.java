@@ -30,6 +30,7 @@ public class JwtFilter implements WebFilter {
 
         return Mono.just(token)
                 .flatMap(jwtService::validateToken)
+                .doOnNext(user -> exchange.getAttributes().put("user", user))
                 .flatMap(user -> onAuthenticationSuccess(buildAuthentication(user, user.getRole()), new WebFilterExchange(exchange, chain)))
                 .then();
     }

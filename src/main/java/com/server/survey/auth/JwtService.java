@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.security.Key;
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -37,6 +38,7 @@ public class JwtService {
         claims.put("name", user.getName());
         claims.put("email", user.getEmail());
         claims.put("role", user.getRole());
+        claims.put("createdAt", user.getCreatedAt().toString());
 
         return buildToken(claims);
     }
@@ -57,13 +59,19 @@ public class JwtService {
     public Mono<User> validateToken(String token) {
         try {
             Claims claims = extractAllClaims(token);
+
             String roleString = claims.get("role", String.class);
             RoleType role = RoleType.valueOf(roleString);
+
+            String createdAtString = claims.get("createdAt", String.class);
+            LocalDateTime createdAt = LocalDateTime.parse(createdAtString);
+
             User user = User.builder()
                     .withId(claims.get("id", String.class))
                     .withName(claims.get("name", String.class))
                     .withEmail(claims.get("email", String.class))
                     .withRole(role)
+                    .withCreatedAt(createdAt)
                     .build();
 
             return Mono.just(user);
