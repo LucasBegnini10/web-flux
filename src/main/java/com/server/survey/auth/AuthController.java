@@ -4,10 +4,8 @@ import com.server.survey.auth.dto.AuthDTO;
 import com.server.survey.auth.dto.AuthResponseDTO;
 import com.server.survey.user.User;
 import com.server.survey.user.dto.CreateUserDTO;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
 @RestController
@@ -26,6 +24,7 @@ public class AuthController {
     }
 
     @PostMapping("register")
+    @ResponseStatus(HttpStatus.CREATED)
     public Mono<User> register(@RequestBody CreateUserDTO createUserDTO){
         return this.authService.register(createUserDTO);
     }

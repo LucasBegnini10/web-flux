@@ -10,28 +10,25 @@ import reactor.core.publisher.Mono;
 public class ErrorHandler {
 
     @ExceptionHandler(BadRequestException.class)
-    public ResponseEntity<ErrorResponse> handleBadRequestException(BadRequestException ex){
+    public Mono<ResponseEntity<ErrorResponse>> handleBadRequestException(BadRequestException ex){
         return Mono.just(ex)
                 .map(ErrorResponse::badRequest)
-                .map(error -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error))
-                .block();
+                .map(error -> ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error));
 
     }
 
     @ExceptionHandler(NotFoundException.class)
-    public ResponseEntity<ErrorResponse> handleNotFoundException(NotFoundException ex){
+    public Mono<ResponseEntity<ErrorResponse>> handleNotFoundException(NotFoundException ex){
         return Mono.just(ex)
                 .map(ErrorResponse::notFound)
-                .map(error -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(error))
-                .block();
+                .map(error -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(error));
     }
 
     @ExceptionHandler(UnauthorizedException.class)
-    public ResponseEntity<ErrorResponse> handleUnauthorizedException(UnauthorizedException ex){
+    public Mono<ResponseEntity<ErrorResponse>> handleUnauthorizedException(UnauthorizedException ex){
         return Mono.just(ex)
                 .map(ErrorResponse::unauthorized)
-                .map(error -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error))
-                .block();
+                .map(error -> ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(error));
 
     }
 }
