@@ -52,8 +52,7 @@ public class AuthService {
     }
 
     public Mono<User> register(CreateUserDTO createUserDTO) {
-        String email = createUserDTO.getEmail();
-        return Mono.just(email)
+        return Mono.just(createUserDTO.getEmail())
                 .flatMap(this::checkIfUserExists)
                 .switchIfEmpty(createAndSaveUser(createUserDTO));
     }
