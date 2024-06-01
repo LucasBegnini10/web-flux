@@ -20,12 +20,15 @@ import java.util.Map;
 
 @Service
 public class JwtService {
+    private final String secretKey;
+    private final long jwtExpiration;
 
-    @Value("${application.security.jwt.secret-key}")
-    private String secretKey;
-
-    @Value("${application.security.jwt.expiration}")
-    private long jwtExpiration;
+    public JwtService(
+            @Value("${application.security.jwt.secret-key}") String key,
+            @Value("${application.security.jwt.expiration}") long expiration){
+        this.secretKey = key;
+        this.jwtExpiration = expiration;
+    }
 
     private Key getSignInKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);

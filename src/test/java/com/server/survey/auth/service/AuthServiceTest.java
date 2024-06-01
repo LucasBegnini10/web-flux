@@ -60,7 +60,7 @@ public class AuthServiceTest {
     }
 
     @Test()
-    public void should_returnUserNotFound_when_UserAuthenticateWithIncorrectEmail() {
+    public void should_throwsUserNotFound_when_UserAuthenticateWithIncorrectEmail() {
         String email = "email";
         String password = "password";
 
@@ -76,7 +76,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void should_returnBadCredentials_when_UserAuthenticateWithBadCredentials() {
+    public void should_throwsBadCredentials_when_UserAuthenticateWithBadCredentials() {
         String email = "email";
         String password = "password";
 
@@ -122,7 +122,7 @@ public class AuthServiceTest {
     }
 
     @Test
-    public void should_returnUserAlreadyExistsException_when_userRegisterWithAlreadyExistingEmail() {
+    public void should_throwsUserAlreadyExistsException_when_userRegisterWithAlreadyExistingEmail() {
         CreateUserDTO createUserDTO = new CreateUserDTO("Lucas", "email", "password");
 
         when(userService.findUserByEmail(createUserDTO.getEmail())).thenReturn(Mono.just(User.builder().build()));
